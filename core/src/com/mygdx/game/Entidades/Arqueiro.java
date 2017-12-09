@@ -15,10 +15,18 @@ public class Arqueiro extends Personagem {
         resistencia += 2;
         velocidade += 3;
 
-        TextureRegion[][] spritesheet = TextureRegion.split(new Texture("arqueiro.png"), 32, 32);
-
-        for(int i = 0; i < 6; i++)
-            rolls[i] = new Animation(SPEED, spritesheet[i]);
+        TextureRegion[][] andando = TextureRegion.split(new Texture("arqueiro_andando.png"), SIZE, SIZE);
+        for(int i = 0; i < 4; i++)
+            rolls[i] = new Animation(SPEED, andando[i]); //0=UP,1=LEFT,2=DOWN,3=RIGHT
+        TextureRegion[][] atacando = TextureRegion.split(new Texture("arqueiro_atacando.png"), SIZE, SIZE);
+        for(int i = 4; i < 8; i++)
+            rolls[i] = new Animation(SPEED, atacando[i-4]); //0=UP,1=LEFT,2=DOWN,3=RIGHT
+        TextureRegion[][] magia = TextureRegion.split(new Texture("arqueiro_castando.png"), SIZE, SIZE);
+        for(int i = 8; i < 12; i++)
+            rolls[i] = new Animation(SPEED, magia[i-8]); //0=UP,1=LEFT,2=DOWN,3=RIGHT
+        TextureRegion[][] morte  = TextureRegion.split(new Texture("arqueiro_morrendo.png"), SIZE, SIZE);
+        rolls[12] = new Animation(SPEED, morte[0]);
+        texture = new Texture("arqueiro.png");
 
         // Habilidade(nome, alcance, tipo, envenenar, congelar, danoExtra, lentidao, stun, mana, dano);
         skills[0] = new Habilidade("Flechada", 4, "SF", false, false, false, false, false, 0, 3);

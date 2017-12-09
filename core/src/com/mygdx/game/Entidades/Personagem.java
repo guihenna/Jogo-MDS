@@ -23,6 +23,8 @@ public abstract class Personagem {
     protected float y;
     protected int move;
     public int roll;
+    protected int dir; //0=UP,1=LEFT,2=DOWN,3=RIGHT
+    protected int acao; //0=PARADO,1=ATACANDO,2=ANDANDO,3=MORRENDO
 
     public Animation rolls[];
 
@@ -67,6 +69,7 @@ public abstract class Personagem {
         move = 3;
         rolls = new Animation[13];
         roll = 0;
+        acao = 0;
         //texture = new Texture("badlogic.jpg");
     }
 
@@ -146,6 +149,12 @@ public abstract class Personagem {
     public int getMove() {
         return move;
     }
+    public int getDir() {
+        return dir;
+    }
+    public int getAcao() {
+        return acao;
+    }
 
     public void setArmadura(int armadura) {
         this.armadura = armadura;
@@ -194,5 +203,11 @@ public abstract class Personagem {
     }
     public void setMove(int move) {
         this.move = move;
+    }
+    public void setDir(int dir) {
+        this.dir = dir;
+    }
+    public void setAcao(int acao) {
+        this.acao = acao;
     }
 }

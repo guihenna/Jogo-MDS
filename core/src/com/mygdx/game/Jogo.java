@@ -21,7 +21,7 @@ public class Jogo extends Game {
 
 		for(int i = 0; i < 6; i++) {
 			melhorias[i] = i%6 + 1;
-			escolhas[i] = 2;//i % 3 + 1;
+			escolhas[i] = i%3 + 1;
 		}
 		setScreen(new TelaJogo(this));
 	}

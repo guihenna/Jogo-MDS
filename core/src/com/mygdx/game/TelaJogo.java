@@ -24,11 +24,18 @@ public class TelaJogo implements Screen {
     public static final int WIDTH = Gdx.app.getGraphics().getWidth();
     public static final int HEIGHT = Gdx.app.getGraphics().getHeight();
 
+    public static final int ESPACO_WIDTH = 128;
+    public static final int ESPACO_HEIGHT = 128;
+
+    public static final int TILT_WIDTH = 20;
+    public static final int TILT_HEIGHT = 0;
+
     private Personagem personagens[];
     private Texture fundo;
     private Mapa mapa;
     Jogo jogo;
     float stateTime = 0;
+    Habilidade habilidadeAtual;
 
     public TelaJogo(Jogo jogo) {
         this.jogo = jogo;
@@ -65,22 +72,40 @@ public class TelaJogo implements Screen {
                 personagens[i] = new Arqueiro(resVeneno, modificadores);
             }
 
-            personagens[i].setX(i * 128);
-            personagens[i].setY(i * 128);
+            personagens[i].setX(0);
+            personagens[i].setY(i);
             personagens[i].setRoll(i);
+            personagens[i].setAcao(2);
         }
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         jogo.batch.begin();
 
         //jogo.batch.draw(fundo, 0, 0, WIDTH, HEIGHT);
         for(int i = 0; i < 6; i++) {
-            jogo.batch.draw((TextureRegion)personagens[i].rolls[personagens[i].roll].getKeyFrame(stateTime, true), personagens[i].getX(), personagens[i].getY(), 128, 128);
+
+            if(personagens[i].getAcao() != 0) {
+                jogo.batch.draw((TextureRegion) personagens[i].rolls[personagens[i].roll].getKeyFrame(stateTime, false), personagens[i].getX() * ESPACO_WIDTH + personagens[i].getY() * TILT_WIDTH, personagens[i].getY() * ESPACO_HEIGHT, 128, 128);
+            }
+            else {
+                jogo.batch.draw(personagens[i].getTexture(), personagens[i].getX() * ESPACO_WIDTH + personagens[i].getY() * TILT_WIDTH, personagens[i].getY() * ESPACO_HEIGHT, 128, 128);
+            }
+
+            if(personagens[i].rolls[personagens[i].roll].isAnimationFinished(stateTime)) {
+                if(personagens[i].getAcao() == 1) { // Acabou o ataque
+                    //Animacao Parado
+                    personagens[i].setAcao(0);
+                }
+                if(personagens[i].getAcao() == 2) { // Parou de andar
+                    //Animacao Parado
+                    personagens[i].setAcao(0);
+                }
+            }
         }
         stateTime += delta;
         jogo.batch.end();

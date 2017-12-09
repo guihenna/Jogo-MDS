@@ -15,17 +15,18 @@ public class Guerreiro extends Personagem {
         resistencia += 3;
         velocidade += 1;
 
-        TextureRegion[][] andando = TextureRegion.split(new Texture("guerreiro_andando.jpeg"), SIZE, SIZE);
+        TextureRegion[][] andando = TextureRegion.split(new Texture("guerreiro_andando.png"), SIZE, SIZE);
         for(int i = 0; i < 4; i++)
             rolls[i] = new Animation(SPEED, andando[i]); //0=UP,1=LEFT,2=DOWN,3=RIGHT
-        TextureRegion[][] atacando = TextureRegion.split(new Texture("guerreiro_atacando.jpeg"), SIZE, SIZE);
+        TextureRegion[][] atacando = TextureRegion.split(new Texture("guerreiro_atacando.png"), SIZE, SIZE);
         for(int i = 4; i < 8; i++)
-            rolls[i] = new Animation(SPEED, atacando[i]); //0=UP,1=LEFT,2=DOWN,3=RIGHT
-        TextureRegion[][] magia = TextureRegion.split(new Texture("guerreiro_castando.jpeg"), SIZE, SIZE);
+            rolls[i] = new Animation(SPEED, atacando[i-4]); //0=UP,1=LEFT,2=DOWN,3=RIGHT
+        TextureRegion[][] magia = TextureRegion.split(new Texture("guerreiro_castando.png"), SIZE, SIZE);
         for(int i = 8; i < 12; i++)
-            rolls[i] = new Animation(SPEED, magia[i]); //0=UP,1=LEFT,2=DOWN,3=RIGHT
-        TextureRegion[][] morte  = TextureRegion.split(new Texture("guerreiro_morrendo.jpeg"), SIZE, SIZE);
+            rolls[i] = new Animation(SPEED, magia[i-8]); //0=UP,1=LEFT,2=DOWN,3=RIGHT
+        TextureRegion[][] morte  = TextureRegion.split(new Texture("guerreiro_morrendo.png"), SIZE, SIZE);
         rolls[12] = new Animation(SPEED, morte[0]);
+        texture = new Texture("guerreiro.png");
 
         skills[0] = new Habilidade("Golpe de Espada", 2, "SF", false, false, false, false, false, 0, 10);
         skills[1] = new Habilidade("Escudo Protetor", 1, "AE", false, false, false, false, false, 20, 30);
