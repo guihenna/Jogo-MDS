@@ -24,10 +24,10 @@ public class TelaJogo implements Screen {
     public static final int WIDTH = Gdx.app.getGraphics().getWidth();
     public static final int HEIGHT = Gdx.app.getGraphics().getHeight();
 
-    public static final int ESPACO_WIDTH = 128;
+    public static final int ESPACO_WIDTH = 64*WIDTH/1060;
     public static final int ESPACO_HEIGHT = HEIGHT/10;
 
-    public static final int TILT_WIDTH = 10*WIDTH / 1060;
+    public static final int TILT_WIDTH = 11*WIDTH / 1060;
     public static final int TILT_HEIGHT = 10*HEIGHT / 650;
 
     private Personagem personagens[];
@@ -43,7 +43,7 @@ public class TelaJogo implements Screen {
         int melhorias[] = jogo.melhorias;
 
         personagens = new Personagem[6];
-        mapa = new Mapa(20, 20);
+        mapa = new Mapa(10, 15);
 
         boolean resVeneno;
 
@@ -77,11 +77,13 @@ public class TelaJogo implements Screen {
             personagens[i].setRoll(i);
             personagens[i].setAcao(2);
         }
+        personagens[5].setX(14);
+        personagens[5].setY(9);
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(0.1f, 0.12f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         jogo.batch.begin();
