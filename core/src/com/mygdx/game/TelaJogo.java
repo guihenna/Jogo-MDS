@@ -25,10 +25,10 @@ public class TelaJogo implements Screen {
     public static final int HEIGHT = Gdx.app.getGraphics().getHeight();
 
     public static final int ESPACO_WIDTH = 128;
-    public static final int ESPACO_HEIGHT = 128;
+    public static final int ESPACO_HEIGHT = HEIGHT/10;
 
-    public static final int TILT_WIDTH = 20;
-    public static final int TILT_HEIGHT = 0;
+    public static final int TILT_WIDTH = 10*WIDTH / 1060;
+    public static final int TILT_HEIGHT = 10*HEIGHT / 650;
 
     private Personagem personagens[];
     private Texture fundo;
@@ -47,7 +47,7 @@ public class TelaJogo implements Screen {
 
         boolean resVeneno;
 
-        fundo = new Texture("badlogic.jpg");
+        fundo = new Texture("campo.png");
 
         for(int i = 0; i < 6; i++) {
             resVeneno = false;
@@ -86,14 +86,14 @@ public class TelaJogo implements Screen {
 
         jogo.batch.begin();
 
-        //jogo.batch.draw(fundo, 0, 0, WIDTH, HEIGHT);
+        jogo.batch.draw(fundo, 0, 0, WIDTH, HEIGHT);
         for(int i = 0; i < 6; i++) {
 
             if(personagens[i].getAcao() != 0) {
-                jogo.batch.draw((TextureRegion) personagens[i].rolls[personagens[i].roll].getKeyFrame(stateTime, false), personagens[i].getX() * ESPACO_WIDTH + personagens[i].getY() * TILT_WIDTH, personagens[i].getY() * ESPACO_HEIGHT, 128, 128);
+                jogo.batch.draw((TextureRegion) personagens[i].rolls[personagens[i].roll].getKeyFrame(stateTime, false), personagens[i].getX() * ESPACO_WIDTH + personagens[i].getY() * TILT_WIDTH, TILT_HEIGHT + personagens[i].getY() * ESPACO_HEIGHT, ESPACO_WIDTH, ESPACO_HEIGHT);
             }
             else {
-                jogo.batch.draw(personagens[i].getTexture(), personagens[i].getX() * ESPACO_WIDTH + personagens[i].getY() * TILT_WIDTH, personagens[i].getY() * ESPACO_HEIGHT, 128, 128);
+                jogo.batch.draw(personagens[i].getTexture(), personagens[i].getX() * ESPACO_WIDTH + personagens[i].getY() * TILT_WIDTH, TILT_HEIGHT + personagens[i].getY() * ESPACO_HEIGHT, ESPACO_WIDTH, ESPACO_HEIGHT);
             }
 
             if(personagens[i].rolls[personagens[i].roll].isAnimationFinished(stateTime)) {
