@@ -32,6 +32,7 @@ public class TelaJogo implements Screen {
 
     private Personagem personagens[];
     private Texture fundo;
+    private Texture campo;
     private Mapa mapa;
     Jogo jogo;
     float stateTime = 0;
@@ -47,7 +48,8 @@ public class TelaJogo implements Screen {
 
         boolean resVeneno;
 
-        fundo = new Texture("campo.png");
+        fundo = new Texture("fundo.png");
+        campo = new Texture("campo.png");
 
         for(int i = 0; i < 6; i++) {
             resVeneno = false;
@@ -89,6 +91,7 @@ public class TelaJogo implements Screen {
         jogo.batch.begin();
 
         jogo.batch.draw(fundo, 0, 0, WIDTH, HEIGHT);
+        jogo.batch.draw(campo, 0, 0, WIDTH, HEIGHT);
         for(int i = 0; i < 6; i++) {
 
             if(personagens[i].getAcao() != 0) {
