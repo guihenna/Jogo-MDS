@@ -1,26 +1,19 @@
 package com.mygdx.game;
 
-import java.lang.System;
-import java.lang.System.*;
-
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.mygdx.game.Entidades.Arqueiro;
+import com.mygdx.game.Entidades.Guerreiro;
+import com.mygdx.game.Entidades.Habilidade;
 import com.mygdx.game.Entidades.Mago;
 import com.mygdx.game.Entidades.Mapa;
 import com.mygdx.game.Entidades.Personagem;
-import com.mygdx.game.Entidades.Guerreiro;
-import com.mygdx.game.Entidades.Habilidade;
 
-import static java.lang.System.*;
-
-public class TelaJogo implements Screen {
+public class TelaJogo implements Screen, InputProcessor {
     public static final int WIDTH = Gdx.app.getGraphics().getWidth();
     public static final int HEIGHT = Gdx.app.getGraphics().getHeight();
 
@@ -33,12 +26,19 @@ public class TelaJogo implements Screen {
     private Personagem personagens[];
     private Texture fundo;
     private Texture campo;
+    private Texture botaoOpcoes;
+    private Texture botaoSair;
+    private float opcoesX;
+    private float opcoesY;
+    private boolean movendo;
+
     private Mapa mapa;
     Jogo jogo;
     float stateTime = 0;
     Habilidade habilidadeAtual;
 
     public TelaJogo(Jogo jogo) {
+        opcoesX = opcoesY = 0;
         this.jogo = jogo;
         int escolhas[] = jogo.escolhas;
         int melhorias[] = jogo.melhorias;
@@ -50,6 +50,8 @@ public class TelaJogo implements Screen {
 
         fundo = new Texture("fundo.png");
         campo = new Texture("campo.png");
+        botaoOpcoes = new Texture("botaoOpcoes.png");
+        botaoSair = new Texture("botaoSair.png");
 
         for(int i = 0; i < 6; i++) {
             resVeneno = false;
@@ -113,6 +115,37 @@ public class TelaJogo implements Screen {
             }
         }
         stateTime += delta;
+
+        jogo.batch.draw(botaoSair, opcoesX + WIDTH/3, opcoesY, WIDTH / 10, WIDTH / 10);
+
+        jogo.batch.draw(botaoOpcoes, opcoesX, opcoesY, WIDTH / 4, HEIGHT / 2);
+
+        if(Gdx.input.isTouched()) {
+            if(Gdx.input.getX() >= opcoesX + WIDTH/4 && Gdx.input.getX() <= opcoesX + WIDTH/3 &&
+                    Gdx.input.getY() >= opcoesY && Gdx.input.getY() <= opcoesY + HEIGHT/2)
+                movendo = true;
+        }
+        else {
+            movendo = false;
+        }
+
+        if(movendo == true) {
+            float x = Gdx.input.getDeltaX();
+            float y = Gdx.input.getDeltaY();
+
+            opcoesX += x;
+            opcoesY -= y;
+            if(opcoesX < 0)
+                opcoesX = 0;
+            if(opcoesY < 0)
+                opcoesY = 0;
+
+            if(opcoesX > (WIDTH - WIDTH/3 - WIDTH/10))
+                opcoesX = (WIDTH - WIDTH/3 - WIDTH/10);
+            if(opcoesY > (HEIGHT - HEIGHT/2))
+                opcoesY = (HEIGHT - HEIGHT/2);
+        }
+
         jogo.batch.end();
         //jogo.batch.draw(personagens[i].rolls);
     }
@@ -144,5 +177,48 @@ public class TelaJogo implements Screen {
     @Override
     public void hide () {
 
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        movendo = false;
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+
+        return true;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
     }
 }
