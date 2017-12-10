@@ -27,6 +27,7 @@ public class Guerreiro extends Personagem {
         TextureRegion[][] morte  = TextureRegion.split(new Texture("guerreiro_morrendo.png"), SIZE, SIZE);
         rolls[12] = new Animation(SPEED, morte[0]);
         texture = new Texture("guerreiro.png");
+        info = new Texture("infoGuerreiro.png");
 
         skills[0] = new Habilidade("Golpe de Espada", 2, "SF", false, false, false, false, false, 0, 10);
         skills[1] = new Habilidade("Escudo Protetor", 1, "AE", false, false, false, false, false, 20, 30);

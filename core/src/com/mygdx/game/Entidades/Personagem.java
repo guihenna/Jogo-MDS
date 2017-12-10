@@ -25,8 +25,17 @@ public abstract class Personagem {
     public int roll;
     protected int dir; //0=UP,1=LEFT,2=DOWN,3=RIGHT
     protected int acao; //0=PARADO,1=ATACANDO,2=ANDANDO,3=MORRENDO
+    protected Texture info;
 
     public Animation rolls[];
+
+    public Texture getInfo() {
+        return info;
+    }
+
+    public void setInfo(Texture info) {
+        this.info = info;
+    }
 
     public Texture getTexture() {
         return texture;

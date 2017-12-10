@@ -14,23 +14,31 @@ import com.mygdx.game.Entidades.Mapa;
 import com.mygdx.game.Entidades.Personagem;
 
 public class TelaJogo implements Screen, InputProcessor {
+
+    public int POSX = 0;
+    public int POSY = 0;
+
     public static final int WIDTH = Gdx.app.getGraphics().getWidth();
     public static final int HEIGHT = Gdx.app.getGraphics().getHeight();
 
-    public static final int ESPACO_WIDTH = 64*WIDTH/1060;
-    public static final int ESPACO_HEIGHT = HEIGHT/10;
-
     public static final int TILT_WIDTH = 11*WIDTH / 1060;
     public static final int TILT_HEIGHT = 10*HEIGHT / 650;
+
+    public static final int ESPACO_WIDTH = 64*WIDTH/1060;
+    public static final int ESPACO_HEIGHT = (HEIGHT - TILT_HEIGHT)/10;
 
     private Personagem personagens[];
     private Texture fundo;
     private Texture campo;
     private Texture botaoOpcoes;
     private Texture botaoSair;
-    private float opcoesX;
-    private float opcoesY;
+    private Texture espacoMover;
+    private Texture espacoAtacar;
+
+    private float dragX;
+    private float dragY;
     private boolean movendo;
+    private int acao;
 
     private Mapa mapa;
     Jogo jogo;
@@ -38,7 +46,7 @@ public class TelaJogo implements Screen, InputProcessor {
     Habilidade habilidadeAtual;
 
     public TelaJogo(Jogo jogo) {
-        opcoesX = opcoesY = 0;
+        dragX = dragY = 0;
         this.jogo = jogo;
         int escolhas[] = jogo.escolhas;
         int melhorias[] = jogo.melhorias;
@@ -46,12 +54,25 @@ public class TelaJogo implements Screen, InputProcessor {
         personagens = new Personagem[6];
         mapa = new Mapa(10, 15);
 
+        /*for(int i = 0; i < mapa.getLin(); i++) {
+            for(int j = 0; j < mapa.getCol(); j++) {
+                if(i % 2 != j%2)
+                    mapa.setTipo(i, j, 1);
+                else
+                    mapa.setTipo(i, j, 2);
+            }
+        }*/
+
         boolean resVeneno;
 
         fundo = new Texture("fundo.png");
         campo = new Texture("campo.png");
         botaoOpcoes = new Texture("botaoOpcoes.png");
         botaoSair = new Texture("botaoSair.png");
+        espacoMover = new Texture("espacoMover.png");
+        espacoAtacar = new Texture("espacoAtacar.png");
+
+        acao = 0;
 
         for(int i = 0; i < 6; i++) {
             resVeneno = false;
@@ -75,14 +96,23 @@ public class TelaJogo implements Screen, InputProcessor {
             else {
                 personagens[i] = new Arqueiro(resVeneno, modificadores);
             }
-
-            personagens[i].setX(0);
-            personagens[i].setY(i);
-            personagens[i].setRoll(i);
-            personagens[i].setAcao(2);
         }
-        personagens[5].setX(14);
-        personagens[5].setY(9);
+        personagens[0].setX(5);
+        personagens[1].setX(7);
+        personagens[2].setX(9);
+
+        personagens[0].setY(2);
+        personagens[1].setY(2);
+        personagens[2].setY(2);
+
+        personagens[3].setX(5);
+        personagens[4].setX(7);
+        personagens[5].setX(9);
+
+        personagens[3].setY(7);
+        personagens[4].setY(7);
+        personagens[5].setY(7);
+
     }
 
     @Override
@@ -93,14 +123,23 @@ public class TelaJogo implements Screen, InputProcessor {
         jogo.batch.begin();
 
         jogo.batch.draw(fundo, 0, 0, WIDTH, HEIGHT);
-        jogo.batch.draw(campo, 0, 0, WIDTH, HEIGHT);
+        jogo.batch.draw(campo, POSX, POSY, WIDTH, HEIGHT);
+        for(int j = 0; j < mapa.getLin(); j++) {
+            for(int i = 0; i < mapa.getCol(); i++) {
+                if(mapa.getGrid()[j][i].getTipo() == 1)
+                    jogo.batch.draw(espacoMover, POSX + i*ESPACO_WIDTH + j*TILT_WIDTH, POSY + TILT_HEIGHT + j * ESPACO_HEIGHT, ESPACO_WIDTH, ESPACO_HEIGHT);
+                else if(mapa.getGrid()[j][i].getTipo() == 2)
+                    jogo.batch.draw(espacoAtacar, POSX + i*ESPACO_WIDTH + j*TILT_WIDTH, POSY + TILT_HEIGHT + j * ESPACO_HEIGHT, ESPACO_WIDTH, ESPACO_HEIGHT);
+            }
+        }
         for(int i = 0; i < 6; i++) {
-
+            // Desenhar a vida e a mana
+            jogo.batch.draw(personagens[i].getInfo(), i * (WIDTH/6), HEIGHT - ESPACO_HEIGHT, WIDTH/6, ESPACO_HEIGHT);
             if(personagens[i].getAcao() != 0) {
-                jogo.batch.draw((TextureRegion) personagens[i].rolls[personagens[i].roll].getKeyFrame(stateTime, false), personagens[i].getX() * ESPACO_WIDTH + personagens[i].getY() * TILT_WIDTH, TILT_HEIGHT + personagens[i].getY() * ESPACO_HEIGHT, ESPACO_WIDTH, ESPACO_HEIGHT);
+                jogo.batch.draw((TextureRegion) personagens[i].rolls[personagens[i].roll].getKeyFrame(stateTime, false), POSX + personagens[i].getX() * ESPACO_WIDTH + personagens[i].getY() * TILT_WIDTH, POSY + TILT_HEIGHT + personagens[i].getY() * ESPACO_HEIGHT, ESPACO_WIDTH, ESPACO_HEIGHT);
             }
             else {
-                jogo.batch.draw(personagens[i].getTexture(), personagens[i].getX() * ESPACO_WIDTH + personagens[i].getY() * TILT_WIDTH, TILT_HEIGHT + personagens[i].getY() * ESPACO_HEIGHT, ESPACO_WIDTH, ESPACO_HEIGHT);
+                jogo.batch.draw(personagens[i].getTexture(), POSX + personagens[i].getX() * ESPACO_WIDTH + personagens[i].getY() * TILT_WIDTH, POSY + TILT_HEIGHT + personagens[i].getY() * ESPACO_HEIGHT, ESPACO_WIDTH, ESPACO_HEIGHT);
             }
 
             if(personagens[i].rolls[personagens[i].roll].isAnimationFinished(stateTime)) {
@@ -116,14 +155,30 @@ public class TelaJogo implements Screen, InputProcessor {
         }
         stateTime += delta;
 
-        jogo.batch.draw(botaoSair, opcoesX + WIDTH/3, opcoesY, WIDTH / 10, WIDTH / 10);
+        jogo.batch.draw(botaoSair, WIDTH - (WIDTH/10), 0, WIDTH / 10, WIDTH / 10);
 
-        jogo.batch.draw(botaoOpcoes, opcoesX, opcoesY, WIDTH / 4, HEIGHT / 2);
+        jogo.batch.draw(botaoOpcoes, 0, 0, WIDTH / 4, HEIGHT / 2);
 
         if(Gdx.input.isTouched()) {
-            if(Gdx.input.getX() >= opcoesX + WIDTH/4 && Gdx.input.getX() <= opcoesX + WIDTH/3 &&
-                    Gdx.input.getY() >= opcoesY && Gdx.input.getY() <= opcoesY + HEIGHT/2)
+            if(Gdx.input.getX() <= WIDTH/3 && Gdx.input.getY() <= HEIGHT/2) {// Menu
+                if(Gdx.input.getY() <= HEIGHT/6) { // Mover
+
+                }
+                else if(Gdx.input.getY() <= HEIGHT/3) { // Atacar
+
+                }
+                else { // Aguardar
+
+                }
+            }
+
+            else if(Gdx.input.getX() >= WIDTH - (WIDTH/10) && Gdx.input.getY() <= WIDTH/10) { // Sair
+
+            }
+
+            else if(acao == 0) {
                 movendo = true;
+            }
         }
         else {
             movendo = false;
@@ -133,17 +188,18 @@ public class TelaJogo implements Screen, InputProcessor {
             float x = Gdx.input.getDeltaX();
             float y = Gdx.input.getDeltaY();
 
-            opcoesX += x;
-            opcoesY -= y;
-            if(opcoesX < 0)
-                opcoesX = 0;
-            if(opcoesY < 0)
-                opcoesY = 0;
+            POSX += x;
+            if(POSX > WIDTH - WIDTH/4)
+                POSX = WIDTH - WIDTH/4;
+            if(POSX < -WIDTH/4)
+                POSX = -WIDTH/4;
+            POSY -= y;
+            if(POSY > HEIGHT - HEIGHT/4)
+                POSY = HEIGHT - HEIGHT/4;
+            if(POSY < -HEIGHT/4)
+                POSY = -HEIGHT/4;
 
-            if(opcoesX > (WIDTH - WIDTH/3 - WIDTH/10))
-                opcoesX = (WIDTH - WIDTH/3 - WIDTH/10);
-            if(opcoesY > (HEIGHT - HEIGHT/2))
-                opcoesY = (HEIGHT - HEIGHT/2);
+
         }
 
         jogo.batch.end();

@@ -5,6 +5,8 @@ public class Mapa {
     private int lin;
     private Espaco grid[][];
 
+
+
     public Mapa(int lin, int col) {
         this.lin = lin;
         this.col = col;
@@ -17,6 +19,19 @@ public class Mapa {
             }
         }
     }
+
+    public int getCol() {
+        return col;
+    }
+
+    public int getLin() {
+        return lin;
+    }
+
+    public Espaco[][] getGrid() {
+        return grid;
+    }
+
     public void setEscudo(int i, int j) {
         grid[i][j].setEscudo(30);
         if(i-1 >= 0)
@@ -27,5 +42,9 @@ public class Mapa {
             grid[i][j-1].setEscudo(30);
         if(j+1 < col)
             grid[i][j+1].setEscudo(30);
+    }
+
+    public void setTipo(int i, int j, int tipo) {
+        grid[i][j].setTipo(tipo);
     }
 }

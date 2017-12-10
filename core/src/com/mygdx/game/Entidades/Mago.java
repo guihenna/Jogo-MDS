@@ -27,6 +27,7 @@ public class Mago extends Personagem {
         TextureRegion[][] morte  = TextureRegion.split(new Texture("mago_morrendo.png"), SIZE, SIZE);
         rolls[12] = new Animation(SPEED, morte[0]);
         texture = new Texture("mago.png");
+        info = new Texture("infoMago.png");
 
         skills[0] = new Habilidade("Choque do Trovão",3, "SM", false, false, true, true, false, 5, 5);
         skills[1] = new Habilidade("Bola de Fogo", 3, "SM", false, false, false, false, false, 20, 25);

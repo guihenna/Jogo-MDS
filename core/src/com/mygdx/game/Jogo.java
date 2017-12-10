@@ -1,9 +1,6 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -12,9 +9,11 @@ public class Jogo extends Game {
 	Texture img;
 	int escolhas[];
 	int melhorias[];
+	private GameCamera cam;
 
 	@Override
 	public void create () {
+
 		batch = new SpriteBatch();
 		escolhas = new int[6];
 		melhorias = new int[7];

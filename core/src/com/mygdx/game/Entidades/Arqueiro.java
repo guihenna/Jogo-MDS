@@ -27,6 +27,7 @@ public class Arqueiro extends Personagem {
         TextureRegion[][] morte  = TextureRegion.split(new Texture("arqueiro_morrendo.png"), SIZE, SIZE);
         rolls[12] = new Animation(SPEED, morte[0]);
         texture = new Texture("arqueiro.png");
+        info = new Texture("infoArqueiro.png");
 
         // Habilidade(nome, alcance, tipo, envenenar, congelar, danoExtra, lentidao, stun, mana, dano);
         skills[0] = new Habilidade("Flechada", 4, "SF", false, false, false, false, false, 0, 3);
