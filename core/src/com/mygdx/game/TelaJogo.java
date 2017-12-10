@@ -27,6 +27,14 @@ public class TelaJogo implements Screen, InputProcessor {
     public static final int ESPACO_WIDTH = 64*WIDTH/1060;
     public static final int ESPACO_HEIGHT = (HEIGHT - TILT_HEIGHT)/10;
 
+    public static final float barraX = 94f*(WIDTH/6f)/256f;
+    public static final float barraY = 19f*ESPACO_HEIGHT/64f;
+    public static final float barraTam = 12f*ESPACO_HEIGHT/64f;
+    public static final float barraEspaco = 3f*ESPACO_HEIGHT/64f;
+    public static final float barraEspessura = 92*(WIDTH/6f)/256f;
+
+
+
     private Personagem personagens[];
     private Texture fundo;
     private Texture campo;
@@ -34,11 +42,20 @@ public class TelaJogo implements Screen, InputProcessor {
     private Texture botaoSair;
     private Texture espacoMover;
     private Texture espacoAtacar;
+    private Texture barraHP;
+    private Texture barraSP;
 
     private float dragX;
     private float dragY;
     private boolean movendo;
     private int acao;
+
+    private int vez;
+    private int jogador;
+    private boolean aguardandoRcv;
+    private boolean andou;
+    private boolean atualizou;
+    private int ordem[] = {0, 1, 2, 3, 4, 5};
 
     private Mapa mapa;
     Jogo jogo;
@@ -71,6 +88,8 @@ public class TelaJogo implements Screen, InputProcessor {
         botaoSair = new Texture("botaoSair.png");
         espacoMover = new Texture("espacoMover.png");
         espacoAtacar = new Texture("espacoAtacar.png");
+        barraHP = new Texture("barraHP.png");
+        barraSP = new Texture("barraSP.png");
 
         acao = 0;
 
@@ -113,6 +132,23 @@ public class TelaJogo implements Screen, InputProcessor {
         personagens[4].setY(7);
         personagens[5].setY(7);
 
+        personagens[4].setMana(10);
+        personagens[5].setMana(personagens[5].getMaxMana());
+        personagens[0].setMana(40);
+    }
+
+    public void atualizarOrdem() {
+        for(int i = 0; i < 6; i++) {
+            for(int j = i+1; j < 6; j++) {
+                if(personagens[i].getVelocidade() > personagens[i].getVelocidade())
+                {
+                    Personagem p = personagens[i];
+                    personagens[i] = personagens[j];
+                    personagens[j] = p;
+                }
+            }
+        }
+        atualizou = true;
     }
 
     @Override
@@ -124,6 +160,7 @@ public class TelaJogo implements Screen, InputProcessor {
 
         jogo.batch.draw(fundo, 0, 0, WIDTH, HEIGHT);
         jogo.batch.draw(campo, POSX, POSY, WIDTH, HEIGHT);
+
         for(int j = 0; j < mapa.getLin(); j++) {
             for(int i = 0; i < mapa.getCol(); i++) {
                 if(mapa.getGrid()[j][i].getTipo() == 1)
@@ -135,6 +172,9 @@ public class TelaJogo implements Screen, InputProcessor {
         for(int i = 0; i < 6; i++) {
             // Desenhar a vida e a mana
             jogo.batch.draw(personagens[i].getInfo(), i * (WIDTH/6), HEIGHT - ESPACO_HEIGHT, WIDTH/6, ESPACO_HEIGHT);
+            jogo.batch.draw(barraHP, barraX + i * (WIDTH/6), barraTam + barraEspaco + barraY + HEIGHT - ESPACO_HEIGHT, barraEspessura * ((float)personagens[i].getVida() / (float)personagens[i].getMaxVida()), barraTam);
+            jogo.batch.draw(barraSP, barraX + i * (WIDTH/6), barraY + HEIGHT - ESPACO_HEIGHT, barraEspessura * ((float)personagens[i].getMana() / (float)personagens[i].getMaxMana()), barraTam);
+
             if(personagens[i].getAcao() != 0) {
                 jogo.batch.draw((TextureRegion) personagens[i].rolls[personagens[i].roll].getKeyFrame(stateTime, false), POSX + personagens[i].getX() * ESPACO_WIDTH + personagens[i].getY() * TILT_WIDTH, POSY + TILT_HEIGHT + personagens[i].getY() * ESPACO_HEIGHT, ESPACO_WIDTH, ESPACO_HEIGHT);
             }
@@ -162,13 +202,19 @@ public class TelaJogo implements Screen, InputProcessor {
         if(Gdx.input.isTouched()) {
             if(Gdx.input.getX() <= WIDTH/3 && Gdx.input.getY() <= HEIGHT/2) {// Menu
                 if(Gdx.input.getY() <= HEIGHT/6) { // Mover
+                    if(andou == false) {
 
+                    }
+                    //final do mover
+                    andou = true;
                 }
                 else if(Gdx.input.getY() <= HEIGHT/3) { // Atacar
 
+                    //final do atacar
+                    andou = false;
                 }
                 else { // Aguardar
-
+                    andou = false;
                 }
             }
 

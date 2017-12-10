@@ -29,6 +29,9 @@ public class Guerreiro extends Personagem {
         texture = new Texture("guerreiro.png");
         info = new Texture("infoGuerreiro.png");
 
+        setMaxMana(50);
+        setMaxVida(100);
+
         skills[0] = new Habilidade("Golpe de Espada", 2, "SF", false, false, false, false, false, 0, 10);
         skills[1] = new Habilidade("Escudo Protetor", 1, "AE", false, false, false, false, false, 20, 30);
         skills[2] = new Habilidade("Investida Selvagem", 5, "LF", false, false, false, false, false, 20, 20);

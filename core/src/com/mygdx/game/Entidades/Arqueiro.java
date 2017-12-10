@@ -8,7 +8,7 @@ public class Arqueiro extends Personagem {
     public Arqueiro(Boolean resVeneno, int[] modificadores) {
         super(resVeneno, modificadores);
 
-        vida += 100;
+        vida += 70;
         ataque += 2;
         armadura += 1;
         poder += 2;
@@ -28,6 +28,9 @@ public class Arqueiro extends Personagem {
         rolls[12] = new Animation(SPEED, morte[0]);
         texture = new Texture("arqueiro.png");
         info = new Texture("infoArqueiro.png");
+
+        setMaxMana(50);
+        setMaxVida(70);
 
         // Habilidade(nome, alcance, tipo, envenenar, congelar, danoExtra, lentidao, stun, mana, dano);
         skills[0] = new Habilidade("Flechada", 4, "SF", false, false, false, false, false, 0, 3);

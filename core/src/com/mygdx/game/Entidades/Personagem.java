@@ -7,12 +7,14 @@ public abstract class Personagem {
     final float SPEED = 0.5f;
     final int SIZE = 64;
     protected int vida;
+    protected int maxVida;
     protected int ataque;
     protected int armadura;
     protected int poder;
     protected int resistencia;
     protected int velocidade;
     protected int mana;
+    protected int maxMana;
     protected Habilidade[] skills;
     protected int veneno;
     protected Boolean resVeneno;
@@ -24,44 +26,10 @@ public abstract class Personagem {
     protected int move;
     public int roll;
     protected int dir; //0=UP,1=LEFT,2=DOWN,3=RIGHT
-    protected int acao; //0=PARADO,1=ATACANDO,2=ANDANDO,3=MORRENDO
+    protected int acao; //1=ANDAR,2=CASTAR,3=MORRER,4=NADA
     protected Texture info;
 
     public Animation rolls[];
-
-    public Texture getInfo() {
-        return info;
-    }
-
-    public void setInfo(Texture info) {
-        this.info = info;
-    }
-
-    public Texture getTexture() {
-        return texture;
-    }
-
-    public void setTexture(Texture texture) {
-        this.texture = texture;
-    }
-
-    protected Texture texture;
-
-    public Animation[] getRolls() {
-        return rolls;
-    }
-
-    public void setRolls(Animation[] rolls) {
-        this.rolls = rolls;
-    }
-
-    public int getRoll() {
-        return roll;
-    }
-
-    public void setRoll(int roll) {
-        this.roll = roll;
-    }
 
     public Personagem(Boolean resVeneno, int[] modificadores) {
         skills = new Habilidade[4];
@@ -89,6 +57,8 @@ public abstract class Personagem {
         }
     }
 
+
+
     public void levarDano(int dano, int tipo) {
         if(tipo == 1) { // Fisico
             escudo -= (dano - armadura);
@@ -110,6 +80,57 @@ public abstract class Personagem {
         //permitir andar $valor casas
     }
 
+    // Setters and Getters
+
+    public Texture getInfo() {
+        return info;
+    }
+
+    public void setInfo(Texture info) {
+        this.info = info;
+    }
+
+    public int getMaxVida() {
+        return maxVida;
+    }
+
+    public void setMaxVida(int maxVida) {
+        this.maxVida = maxVida;
+    }
+
+    public int getMaxMana() {
+        return maxMana;
+    }
+
+    public void setMaxMana(int maxMana) {
+        this.maxMana = maxMana;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
+    }
+
+    protected Texture texture;
+
+    public Animation[] getRolls() {
+        return rolls;
+    }
+
+    public void setRolls(Animation[] rolls) {
+        this.rolls = rolls;
+    }
+
+    public int getRoll() {
+        return roll;
+    }
+
+    public void setRoll(int roll) {
+        this.roll = roll;
+    }
     public int getArmadura() {
         return armadura;
     }

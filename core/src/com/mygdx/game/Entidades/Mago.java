@@ -8,7 +8,7 @@ public class Mago extends Personagem {
     public Mago(Boolean resVeneno, int[] modificadores) {
         super(resVeneno, modificadores);
 
-        vida += 100;
+        vida += 80;
         ataque += 1;
         armadura += 1;
         poder += 4;
@@ -28,6 +28,9 @@ public class Mago extends Personagem {
         rolls[12] = new Animation(SPEED, morte[0]);
         texture = new Texture("mago.png");
         info = new Texture("infoMago.png");
+
+        setMaxMana(50);
+        setMaxVida(80);
 
         skills[0] = new Habilidade("Choque do Trovão",3, "SM", false, false, true, true, false, 5, 5);
         skills[1] = new Habilidade("Bola de Fogo", 3, "SM", false, false, false, false, false, 20, 25);
