@@ -49,7 +49,7 @@ public class Habilidade {
         }
         else if(tipo.charAt(1) == 'V') { // Ataque físico + movimento
             p.levarDano(a.ataque + dano, 1);
-            a.andar(1);
+            a.setMove(1);
         }
         else if(tipo.charAt(1) == 'E') { // Escudo
             // Criar novo escudo no mapa

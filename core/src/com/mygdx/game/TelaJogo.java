@@ -266,7 +266,7 @@ public class TelaJogo implements Screen, InputProcessor {
         jogo.batch.draw(botaoSair, WIDTH - (WIDTH/10), 0, WIDTH / 10, WIDTH / 10);
 
         if(personagens[personagemAtual].getTime() != jogador) {
-            //Esperar resposta do inimigo
+            acao = 18;
         }
 
         if(acao <= 1) // Barra de opcoes só aparece quando o usuario nao tem uma acao
@@ -346,7 +346,25 @@ public class TelaJogo implements Screen, InputProcessor {
                 personagens[personagemAtual].setAcao(0);
                 if(personagens[personagemAtual].getMove() <= 0)
                     andou = true;
+                if(personagens[personagemAtual].getTime() != jogador)
+                    acao = 18;
             }
+        }
+        else if(acao == 18) { // Aguardar inimigo
+            // Aguardar pacote (pode ser de ataque, de movimentacao ou de aguardar
+
+            /* Se receber pacote de movimentacao, setar destX e destY e fazer o seguinte:
+            mapa.setPersonagem(i, j, true);
+            mapa.setPersonagem((int)personagens[personagemAtual].getX(), (int)personagens[personagemAtual].getY(), false);
+            acao = 3;
+            personagens[personagemAtual].setAcao(1);
+             */
+
+            /* Se receber pacote de ataque, setar atkX e atkY, pegar o ID do Ataque (0 - 3) e fazer o seguinte:
+            personagens[personagemAtual].setAcao(2);
+            habilidadeAtual = personagens[personagemAtual].getSkills()[idDoAtaque];
+            acao = 15
+             */
         }
         else if(acao == 13) { // Impedir toque continuo entre duas funcoes
             if(!Gdx.input.isTouched())
@@ -440,9 +458,44 @@ public class TelaJogo implements Screen, InputProcessor {
                 acao = 6;
         }
         else if(acao == 6) { // Animacao e efeito da habilidade
-            personagens[personagemAtual].setMana(personagens[personagemAtual].getMaxMana() - habilidadeAtual.getMana());
+
+            //Aplicar o dano e retirar a mana
+
+            // Aplicar dano single e em linha
+            if(habilidadeAtual.getTipo().indexOf(1) != 'A') {
+                for(int i = 0; i < 6; i++) {
+                    if((int)personagens[i].getX() == (int)atkX && (int)personagens[i].getY() == (int)atkY) {
+                        habilidadeAtual.Atacar(personagens[personagemAtual], personagens[i]);
+                    }
+                }
+            }
+            else { // Aplicar Escudo
+                if(habilidadeAtual.getTipo().indexOf(0) == 'E') {
+                    mapa.setEscudo((int)personagens[personagemAtual].getX(), (int)personagens[personagemAtual].getX());
+                    personagens[personagemAtual].setEscudo(1);
+                }
+                else { // Aplicar dano em area
+                    for(int i = 0; i < 6; i++) {
+                        if(personagens[i].getTime() != personagens[personagemAtual].getTime()) {
+                            if(abs((int)personagens[i].getX() - atkX) + abs((int)personagens[i].getY() - atkY) <= habilidadeAtual.getAlcance()) {
+                                habilidadeAtual.Atacar(personagens[personagemAtual], personagens[i]);
+                            }
+                        }
+                    }
+                }
+            }
+            acao = 16;
         }
-        else if(acao == 20) {
+        else if(acao == 16) {
+            if(!Gdx.input.isTouched())
+                //acao = 8;
+                atualizarRodada();
+        }
+        else if(acao == 8) { // Animacoes das habilidades
+            //Animar
+            acao = 12;
+        }
+        else if(acao == 20) { // Aviso de mana insuficiente
             boolean ok1 = false, ok2 = false;
             jogo.batch.draw(manaInsuficiente, 0, 0, WIDTH/4, HEIGHT/4);
 
