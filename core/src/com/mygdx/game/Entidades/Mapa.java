@@ -10,11 +10,11 @@ public class Mapa {
     public Mapa(int lin, int col) {
         this.lin = lin;
         this.col = col;
-        grid = new Espaco[lin][];
+        grid = new Espaco[col][];
 
-        for(int i = 0; i < lin; i++) {
-            grid[i] = new Espaco[col];
-            for(int j = 0; j < col; j++) {
+        for(int i = 0; i < col; i++) {
+            grid[i] = new Espaco[lin];
+            for(int j = 0; j < lin; j++) {
                 grid[i][j] = new Espaco(i, j);
             }
         }

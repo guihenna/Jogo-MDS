@@ -28,6 +28,7 @@ public abstract class Personagem {
     protected int dir; //0=UP,1=LEFT,2=DOWN,3=RIGHT
     protected int acao; //1=ANDAR,2=CASTAR,3=MORRER,4=NADA
     protected Texture info;
+    protected int time;
 
     public Animation rolls[];
 
@@ -126,6 +127,14 @@ public abstract class Personagem {
 
     public int getRoll() {
         return roll;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
     }
 
     public void setRoll(int roll) {
