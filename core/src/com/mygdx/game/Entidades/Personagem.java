@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 
 public abstract class Personagem {
-    final float SPEED = 0.5f;
+    final float SPEED = 0.2f;
     final int SIZE = 64;
     protected int vida;
     protected int maxVida;

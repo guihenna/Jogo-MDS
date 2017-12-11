@@ -195,9 +195,13 @@ public class TelaJogo implements Screen, InputProcessor {
             jogo.batch.draw(personagens[i].getInfo(), i * (WIDTH/6), HEIGHT - ESPACO_HEIGHT, WIDTH/6, ESPACO_HEIGHT);
             jogo.batch.draw(barraHP, barraX + i * (WIDTH/6), barraTam + barraEspaco + barraY + HEIGHT - ESPACO_HEIGHT, barraEspessura * ((float)personagens[i].getVida() / (float)personagens[i].getMaxVida()), barraTam);
             jogo.batch.draw(barraSP, barraX + i * (WIDTH/6), barraY + HEIGHT - ESPACO_HEIGHT, barraEspessura * ((float)personagens[i].getMana() / (float)personagens[i].getMaxMana()), barraTam);
-
+            boolean loop;
+            if(acao == 3)
+                loop = true;
+            else
+                loop = false;
             if(personagens[i].getAcao() != 0) {
-                jogo.batch.draw((TextureRegion) personagens[i].rolls[personagens[i].roll].getKeyFrame(stateTime, false), POSX + personagens[i].getX() * ESPACO_WIDTH + personagens[i].getY() * TILT_WIDTH, POSY + TILT_HEIGHT + personagens[i].getY() * ESPACO_HEIGHT, ESPACO_WIDTH, ESPACO_HEIGHT);
+                jogo.batch.draw((TextureRegion) personagens[i].rolls[personagens[i].roll].getKeyFrame(stateTime, loop), POSX + personagens[i].getX() * ESPACO_WIDTH + personagens[i].getY() * TILT_WIDTH, POSY + TILT_HEIGHT + personagens[i].getY() * ESPACO_HEIGHT, ESPACO_WIDTH, ESPACO_HEIGHT);
             }
             else {
                 jogo.batch.draw(personagens[i].getTexture(), POSX + personagens[i].getX() * ESPACO_WIDTH + personagens[i].getY() * TILT_WIDTH, POSY + TILT_HEIGHT + personagens[i].getY() * ESPACO_HEIGHT, ESPACO_WIDTH, ESPACO_HEIGHT);
@@ -261,28 +265,28 @@ public class TelaJogo implements Screen, InputProcessor {
         }
         else if(acao == 3) {
             if(personagens[personagemAtual].getX() < destX) {
-                personagens[personagemAtual].setX(personagens[personagemAtual].getX() + 0.1f);
+                personagens[personagemAtual].setX(personagens[personagemAtual].getX() + 0.02f);
                 personagens[personagemAtual].setDir(3);
                 personagens[personagemAtual].setRoll(3);
                 if(personagens[personagemAtual].getX() >= destX)
                     personagens[personagemAtual].setX(destX);
             }
             else if(personagens[personagemAtual].getX() > destX) {
-                personagens[personagemAtual].setX(personagens[personagemAtual].getX() - 0.1f);
+                personagens[personagemAtual].setX(personagens[personagemAtual].getX() - 0.02f);
                 personagens[personagemAtual].setDir(1);
                 personagens[personagemAtual].setRoll(1);
                 if(personagens[personagemAtual].getX() <= destX)
                     personagens[personagemAtual].setX(destX);
             }
             else if(personagens[personagemAtual].getY() < destY) {
-                personagens[personagemAtual].setY(personagens[personagemAtual].getY() + 0.1f);
+                personagens[personagemAtual].setY(personagens[personagemAtual].getY() + 0.02f);
                 personagens[personagemAtual].setDir(0);
                 personagens[personagemAtual].setRoll(0);
                 if(personagens[personagemAtual].getY() >= destY)
                     personagens[personagemAtual].setY(destY);
             }
             else if(personagens[personagemAtual].getY() > destY) {
-                personagens[personagemAtual].setY(personagens[personagemAtual].getY() - 0.1f);
+                personagens[personagemAtual].setY(personagens[personagemAtual].getY() - 0.02f);
                 personagens[personagemAtual].setDir(2);
                 personagens[personagemAtual].setRoll(2);
                 if(personagens[personagemAtual].getY() <= destY)
