@@ -1,12 +1,10 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Jogo extends Game {
 	SpriteBatch batch;
-	Texture img;
 	int escolhas[];
 	int melhorias[];
 	private GameCamera cam;
@@ -33,6 +31,5 @@ public class Jogo extends Game {
 	@Override
 	public void dispose () {
 		batch.dispose();
-		img.dispose();
 	}
 }
