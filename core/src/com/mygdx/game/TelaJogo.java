@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -49,6 +50,7 @@ public class TelaJogo implements Screen, InputProcessor {
     private Texture barraHP;
     private Texture barraSP;
     private Texture selecionaLocal;
+    private boolean gyroscopeAvail = Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope);
 
     private float dragX;
     private float dragY;
@@ -155,12 +157,13 @@ public class TelaJogo implements Screen, InputProcessor {
         */
 
         atualizarOrdem();
+        personagens[0].setMana(10);
     }
 
     public void atualizarOrdem() {
         for(int i = 0; i < 5; i++) {
             for(int j = i+1; j < 6; j++) {
-                if(personagens[i].getVelocidade() < personagens[i].getVelocidade()) {
+                if(personagens[i].getVelocidade() < personagens[j].getVelocidade()) {
                     Personagem p = personagens[i];
                     personagens[i] = personagens[j];
                     personagens[j] = p;
@@ -170,25 +173,19 @@ public class TelaJogo implements Screen, InputProcessor {
         personagemAtual = 0;
     }
 
-    public void atualizarPersonagens() {
-        for(int i = 0; i < 6; i++) {
-            if(personagens[i].getCongelado() || personagens[i].getStun()) {
-                personagens[i].setMove(0);
-            }
-            else {
-                personagens[i].setMove(3);
-            }
-        }
-    }
-
     public void atualizarRodada() {
+        personagens[personagemAtual].setMove(3);
         personagemAtual++;
+
         if(personagemAtual == 6) {
-            atualizarOrdem();
-            atualizarPersonagens();
+            personagemAtual = 0;
         }
         andou = false;
         acao = 12;
+        personagens[personagemAtual].setMana(personagens[personagemAtual].getMana() + 10);
+
+        if(personagens[personagemAtual].getMana() > personagens[personagemAtual].getMaxMana())
+            personagens[personagemAtual].setMana(personagens[personagemAtual].getMaxMana());
     }
 
     @Override
@@ -198,9 +195,11 @@ public class TelaJogo implements Screen, InputProcessor {
 
         jogo.batch.begin();
 
+        // Desenhar o fundo e o campo - O fundo nao pode ser arrastado
         jogo.batch.draw(fundo, 0, 0, WIDTH, HEIGHT);
         jogo.batch.draw(campo, POSX, POSY, WIDTH, HEIGHT);
 
+        // Desenhar os espacos, quando ha movimentacao ou ataque (bordas coloridas)
         for(int j = 0; j < mapa.getLin(); j++) {
             for(int i = 0; i < mapa.getCol(); i++) {
                 if(mapa.getGrid()[i][j].getTipo() == 1)
@@ -209,6 +208,8 @@ public class TelaJogo implements Screen, InputProcessor {
                     jogo.batch.draw(espacoAtacar, POSX + i*ESPACO_WIDTH + j*TILT_WIDTH, POSY + TILT_HEIGHT + j * ESPACO_HEIGHT, ESPACO_WIDTH, ESPACO_HEIGHT);
             }
         }
+
+        // Desenhar os personagens
         for(int i = 0; i < 6; i++) {
             // Desenhar a vida e a mana
             jogo.batch.draw(personagens[i].getInfo(), i * (WIDTH/6), HEIGHT - ESPACO_HEIGHT, WIDTH/6, ESPACO_HEIGHT);
@@ -235,11 +236,13 @@ public class TelaJogo implements Screen, InputProcessor {
         }
         stateTime += delta;
 
+        // Botao de sair ou voltar
         jogo.batch.draw(botaoSair, WIDTH - (WIDTH/10), 0, WIDTH / 10, WIDTH / 10);
 
         if(personagens[personagemAtual].getTime() != jogador) {
-            return;
+            //Esperar resposta do inimigo
         }
+        
         if(acao <= 1)
             jogo.batch.draw(botaoOpcoes, 0, 0, WIDTH / 4, HEIGHT / 2);
 
@@ -353,6 +356,7 @@ public class TelaJogo implements Screen, InputProcessor {
                         }
                     } else { // Aguardar
                         atualizarRodada();
+                        acao = 12;
                     }
                 }
 
