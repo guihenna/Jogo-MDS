@@ -47,4 +47,7 @@ public class Mapa {
     public void setTipo(int i, int j, int tipo) {
         grid[i][j].setTipo(tipo);
     }
+    public void setPersonagem(int i, int j, boolean p) {
+        grid[i][j].setPersonagem(p);
+    }
 }

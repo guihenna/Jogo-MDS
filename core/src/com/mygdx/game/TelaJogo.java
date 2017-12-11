@@ -38,6 +38,9 @@ public class TelaJogo implements Screen, InputProcessor {
 
     private float destX;
     private float destY;
+    private float atkX;
+    private float atkY;
+
     private int personagemAtual;
 
     private Personagem personagens[];
@@ -50,6 +53,7 @@ public class TelaJogo implements Screen, InputProcessor {
     private Texture barraHP;
     private Texture barraSP;
     private Texture selecionaLocal;
+    private Texture manaInsuficiente;
     private boolean gyroscopeAvail = Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope);
 
     private float dragX;
@@ -106,6 +110,7 @@ public class TelaJogo implements Screen, InputProcessor {
         barraHP = new Texture("barraHP.png");
         barraSP = new Texture("barraSP.png");
         selecionaLocal = new Texture("selecioneLocal.png");
+        manaInsuficiente = new Texture("manaInsuficiente.png");
 
         acao = 0;
 
@@ -142,6 +147,10 @@ public class TelaJogo implements Screen, InputProcessor {
         personagens[1].setY(2);
         personagens[2].setY(2);
 
+        mapa.setPersonagem(5, 2, true);
+        mapa.setPersonagem(7, 2, true);
+        mapa.setPersonagem(9, 2, true);
+
         personagens[3].setX(5);
         personagens[4].setX(7);
         personagens[5].setX(9);
@@ -149,6 +158,10 @@ public class TelaJogo implements Screen, InputProcessor {
         personagens[3].setY(7);
         personagens[4].setY(7);
         personagens[5].setY(7);
+
+        mapa.setPersonagem(5, 7, true);
+        mapa.setPersonagem(7, 7, true);
+        mapa.setPersonagem(9, 7, true);
 
         /*
         personagens[4].setMana(10);
@@ -158,6 +171,19 @@ public class TelaJogo implements Screen, InputProcessor {
 
         atualizarOrdem();
         personagens[0].setMana(10);
+    }
+
+    public void pintarVermelho(float x, float y, int alcance) {
+        int x2 = (int)(x);
+        int y2 = (int)(y);
+
+        for(int i = 0; i < mapa.getCol(); i++) {
+            for(int j = 0; j < mapa.getLin(); j++) {
+                if(abs(x2 - i) + abs(y2 - j) <= alcance) {
+                    mapa.setTipo(i, j, 2);
+                }
+            }
+        }
     }
 
     public void atualizarOrdem() {
@@ -242,15 +268,15 @@ public class TelaJogo implements Screen, InputProcessor {
         if(personagens[personagemAtual].getTime() != jogador) {
             //Esperar resposta do inimigo
         }
-        
-        if(acao <= 1)
+
+        if(acao <= 1) // Barra de opcoes só aparece quando o usuario nao tem uma acao
             jogo.batch.draw(botaoOpcoes, 0, 0, WIDTH / 4, HEIGHT / 2);
 
         if(acao == 7) { // Impedir toque continuo entre duas funcoes
             if(!Gdx.input.isTouched())
                 acao = 2;
         }
-        else if(acao == 2) {
+        else if(acao == 2) { // Escolha da movimentacao
             for(int i = 0; i < mapa.getCol(); i++) {
                 for (int j = 0; j < mapa.getLin(); j++) {
                     if (abs(i - personagens[personagemAtual].getX()) + abs(j - personagens[personagemAtual].getY()) <= personagens[personagemAtual].getMove()) {
@@ -263,9 +289,7 @@ public class TelaJogo implements Screen, InputProcessor {
                 //System.out.println(Gdx.input.getX() + "," + Gdx.input.getY() + " - " + (WIDTH-(WIDTH/10)) + "," + WIDTH/10);
                 if (Gdx.input.getX() >= WIDTH - (WIDTH / 10) && HEIGHT - Gdx.input.getY() <= WIDTH / 10) { // Voltar
                     acao = 12;
-                    for(int i = 0; i < mapa.getCol(); i++)
-                        for(int j = 0; j < mapa. getLin(); j++)
-                            mapa.setTipo(i, j, 0);
+                    limparMapa();
                 }
                 else if(clicouParaMover(Gdx.input.getX(), HEIGHT-Gdx.input.getY())) {
                     for(int i = 0; i < mapa.getCol(); i++) {
@@ -277,8 +301,10 @@ public class TelaJogo implements Screen, InputProcessor {
                                 destY = j;
                                 personagens[personagemAtual].setMove(personagens[personagemAtual].getMove() - (abs((int)personagens[personagemAtual].getX() - i) + abs((int)personagens[personagemAtual].getY() - j)));
                                 mapa.setTipo(i, j, 0);
+                                mapa.setPersonagem(i, j, true);
+                                mapa.setPersonagem((int)personagens[personagemAtual].getX(), (int)personagens[personagemAtual].getY(), false);
                                 acao = 3;
-                                //System.out.println(personagens[personagemAtual].getMove());
+                                // Enviar pacote de movimentacao para o inimigo
                                 personagens[personagemAtual].setAcao(1);
                             }
                         }
@@ -286,7 +312,7 @@ public class TelaJogo implements Screen, InputProcessor {
                 }
             }
         }
-        else if(acao == 3) {
+        else if(acao == 3) { // Animacao da movimentacao
             if(personagens[personagemAtual].getX() < destX) {
                 personagens[personagemAtual].setX(personagens[personagemAtual].getX() + 0.02f);
                 personagens[personagemAtual].setDir(3);
@@ -322,11 +348,11 @@ public class TelaJogo implements Screen, InputProcessor {
                     andou = true;
             }
         }
-        else if(acao == 13) {
+        else if(acao == 13) { // Impedir toque continuo entre duas funcoes
             if(!Gdx.input.isTouched())
                 acao = 4;
         }
-        else if(acao == 4) {
+        else if(acao == 4) { // Ataque
             jogo.batch.draw(personagens[personagemAtual].getAtaques(), 0, 0, WIDTH / 4, HEIGHT / 2);
             if(Gdx.input.isTouched()) {
                 System.out.println(Gdx.input.getX() + "," + Gdx.input.getY() + " - " + (WIDTH-(WIDTH/10)) + "," + WIDTH/10);
@@ -335,15 +361,104 @@ public class TelaJogo implements Screen, InputProcessor {
                     acao = 12;
                 }
                 else if(Gdx.input.getX() <= WIDTH/4 && HEIGHT-Gdx.input.getY() <= HEIGHT/2) { // Opcoes de ataque
-
+                    acao = 14;
+                    if(HEIGHT-Gdx.input.getY() >= 3*HEIGHT/8) { // Primeiro ataque
+                        habilidadeAtual = personagens[personagemAtual].getSkills()[0];
+                    }
+                    else if(HEIGHT-Gdx.input.getY() >= HEIGHT/4) { // Segundo ataque
+                        habilidadeAtual = personagens[personagemAtual].getSkills()[1];
+                    }
+                    else if(HEIGHT-Gdx.input.getY() >= HEIGHT/8) { // Terceiro ataque
+                        habilidadeAtual = personagens[personagemAtual].getSkills()[2];
+                    }
+                    else { // Quarto ataque
+                        habilidadeAtual = personagens[personagemAtual].getSkills()[3];
+                    }
                 }
             }
         }
-        else if(acao == 12) {
+        else if(acao == 14) { // Impedir toque continuo entre duas funcoes
+            if(!Gdx.input.isTouched())
+                acao = 5;
+        }
+        else if(acao == 5) { // Escolher alvo da habilidade
+            if(personagens[personagemAtual].getMana() < habilidadeAtual.getMana()) {
+                acao = 20;
+            }
+            else if(habilidadeAtual.getTipo() != "LF") { // Linha reta é caso especial
+                pintarVermelho(personagens[personagemAtual].getX(), personagens[personagemAtual].getY(), habilidadeAtual.getAlcance());
+            }
+            else {
+                int auxX = (int) personagens[personagemAtual].getX();
+                int auxY = (int) personagens[personagemAtual].getY();
+
+                for(int i = 1; i <= 4; i++) {
+                    if(auxX + i < mapa.getCol()) {
+                        mapa.setTipo(auxX + i, auxY, 2);
+                    }
+                    if(auxX - i >= 0) {
+                        mapa.setTipo(auxX - i, auxY, 2);
+                    }
+                    if(auxY + i < mapa.getLin()) {
+                        mapa.setTipo(auxX, auxY + i, 2);
+                    }
+                    if(auxY - i >= 0) {
+                        mapa.setTipo(auxX, auxY - i, 2);
+                    }
+                }
+            }
+            if(acao != 20) {
+                if(Gdx.input.isTouched()) {
+                    if (Gdx.input.getX() >= WIDTH - (WIDTH / 10) && HEIGHT - Gdx.input.getY() <= WIDTH / 10) { // Voltar
+                        acao = 13;
+                        limparMapa();
+                    }
+                }
+                if(clicouParaAtacar(Gdx.input.getX(), HEIGHT-Gdx.input.getY())) {
+                    for(int i = 0; i < mapa.getCol(); i++) {
+                        for(int j = 0; j < mapa.getLin(); j++) {
+                            if(mapa.getGrid()[i][j].getTipo() == 2)
+                                mapa.setTipo(i, j, 0);
+                            else if(mapa.getGrid()[i][j].getTipo() == 5) {
+                                destX = i;
+                                destY = j;
+                                personagens[personagemAtual].setMove(personagens[personagemAtual].getMove() - (abs((int)personagens[personagemAtual].getX() - i) + abs((int)personagens[personagemAtual].getY() - j)));
+                                mapa.setTipo(i, j, 0);
+                                acao = 15;
+                                atkX = i;
+                                atkY = j;
+                                // Enviar pacote de ataque para o inimigo
+                                personagens[personagemAtual].setAcao(2);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if(acao == 15) { // Impedir toque continuo entre duas funcoes
+            if(!Gdx.input.isTouched())
+                acao = 6;
+        }
+        else if(acao == 6) { // Animacao e efeito da habilidade
+            personagens[personagemAtual].setMana(personagens[personagemAtual].getMaxMana() - habilidadeAtual.getMana());
+        }
+        else if(acao == 20) {
+            boolean ok1 = false, ok2 = false;
+            jogo.batch.draw(manaInsuficiente, 0, 0, WIDTH/4, HEIGHT/4);
+
+            if(!Gdx.input.isTouched())
+                ok1 = true;
+            if(Gdx.input.isTouched())
+                ok2 = true;
+
+            if(ok2)
+                acao = 13;
+        }
+        else if(acao == 12) { // Impedir toque continuo entre duas funcoes
             if(!Gdx.input.isTouched())
                 acao = 0;
         }
-        else if(acao == 0) {
+        else if(acao == 0) { // Caso base, opcoes iniciais
             if(Gdx.input.isTouched()) {
                 //System.out.println(Gdx.input.getX() + "," + Gdx.input.getY() + " - " + (WIDTH/4) + "," + HEIGHT/2);
                 if (Gdx.input.getX() <= WIDTH / 4 && Gdx.input.getY() >= HEIGHT - (HEIGHT / 2)) {// Menu
@@ -373,6 +488,7 @@ public class TelaJogo implements Screen, InputProcessor {
                 movendo = false;
         }
 
+        // Movimentacao da tela, arrastando
         if(movendo == true) {
             float x = Gdx.input.getDeltaX();
             float y = Gdx.input.getDeltaY();
@@ -380,13 +496,13 @@ public class TelaJogo implements Screen, InputProcessor {
             POSX += x;
             if(POSX > WIDTH - WIDTH/4)
                 POSX = WIDTH - WIDTH/4;
-            if(POSX < -WIDTH/4)
-                POSX = -WIDTH/4;
+            if(POSX < -(WIDTH - WIDTH/4))
+                POSX = -(WIDTH - WIDTH/4);
             POSY -= y;
             if(POSY > HEIGHT - HEIGHT/4)
                 POSY = HEIGHT - HEIGHT/4;
-            if(POSY < -HEIGHT/4)
-                POSY = -HEIGHT/4;
+            if(POSY < -(HEIGHT - HEIGHT/4))
+                POSY = -(HEIGHT - HEIGHT/4);
 
 
         }
@@ -486,7 +602,7 @@ public class TelaJogo implements Screen, InputProcessor {
 
         for(int i = 0; i < mapa.getCol(); i++) {
             for(int j = 0; j < mapa.getLin(); j++) {
-                if(mapa.getGrid()[i][j].getTipo() != 1)
+                if(mapa.getGrid()[i][j].getTipo() != 1 || mapa.getGrid()[i][j].getPersonagem())
                     continue;
 
                 int inix = POSX + i*ESPACO_WIDTH + j*TILT_WIDTH;
@@ -501,5 +617,42 @@ public class TelaJogo implements Screen, InputProcessor {
             }
         }
         return false;
+    }
+
+    public boolean clicouParaAtacar(int x, int y) {
+        //Descobrir i e j no mapa
+        //jogo.batch.draw(espacoMover, POSX + i*ESPACO_WIDTH + j*TILT_WIDTH, POSY + TILT_HEIGHT + j * ESPACO_HEIGHT, ESPACO_WIDTH, ESPACO_HEIGHT);
+
+        for(int i = 0; i < mapa.getCol(); i++) {
+            for(int j = 0; j < mapa.getLin(); j++) {
+                if(mapa.getGrid()[i][j].getTipo() != 2 || naoHaPersonagens(1-jogador, i, j))
+                    continue;
+
+                int inix = POSX + i*ESPACO_WIDTH + j*TILT_WIDTH;
+                int iniy = POSY + TILT_HEIGHT + j * ESPACO_HEIGHT;
+                int fimx = inix + ESPACO_WIDTH;
+                int fimy = iniy + ESPACO_HEIGHT;
+
+                if(x >= inix && x <= fimx && y >= iniy && y <= fimy) {
+                    mapa.setTipo(i, j, 5);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean naoHaPersonagens(int id, int i, int j) {
+        for(int k = 0; k < 6; k++) {
+            if(personagens[k].getX() == i && personagens[k].getY() == j && personagens[k].getTime() == id)
+                return false;
+        }
+        return true;
+    }
+
+    public void limparMapa() {
+        for(int i = 0; i < mapa.getCol(); i++)
+            for(int j = 0; j < mapa. getLin(); j++)
+                mapa.setTipo(i, j, 0);
     }
 }
