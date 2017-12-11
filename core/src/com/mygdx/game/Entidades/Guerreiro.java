@@ -28,6 +28,7 @@ public class Guerreiro extends Personagem {
         rolls[12] = new Animation(SPEED, morte[0]);
         texture = new Texture("guerreiro.png");
         info = new Texture("infoGuerreiro.png");
+        ataques = new Texture("ataquesGuerreiro.png");
 
         setMaxMana(50);
         setMaxVida(100);

@@ -31,11 +31,12 @@ public abstract class Personagem {
     protected int time;
 
     public Animation rolls[];
+    protected Texture ataques;
 
     public Personagem(Boolean resVeneno, int[] modificadores) {
         skills = new Habilidade[4];
         this.resVeneno = resVeneno;
-        vida = modificadores[0];
+        vida = 0;
         ataque = modificadores[1];
         armadura = modificadores[2];
         poder = modificadores[3];
@@ -135,6 +136,14 @@ public abstract class Personagem {
 
     public void setTime(int time) {
         this.time = time;
+    }
+
+    public Texture getAtaques() {
+        return ataques;
+    }
+
+    public void setAtaques(Texture ataques) {
+        this.ataques = ataques;
     }
 
     public void setRoll(int roll) {

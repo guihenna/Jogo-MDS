@@ -28,6 +28,7 @@ public class Arqueiro extends Personagem {
         rolls[12] = new Animation(SPEED, morte[0]);
         texture = new Texture("arqueiro.png");
         info = new Texture("infoArqueiro.png");
+        ataques = new Texture("ataquesArqueiro.png");
 
         setMaxMana(50);
         setMaxVida(70);

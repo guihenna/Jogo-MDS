@@ -28,6 +28,7 @@ public class Mago extends Personagem {
         rolls[12] = new Animation(SPEED, morte[0]);
         texture = new Texture("mago.png");
         info = new Texture("infoMago.png");
+        ataques = new Texture("ataquesMago.png");
 
         setMaxMana(50);
         setMaxVida(80);
